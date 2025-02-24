@@ -1,0 +1,42 @@
+{
+  "name": "solnest",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@radix-ui/react-label": "^2.1.1",
+    "@react-three/fiber": "^9.0.0-alpha.8",
+    "@tabler/icons-react": "^3.29.0",
+    "clsx": "^2.1.1",
+    "dotenv": "^16.4.7",
+    "dotted-map": "^2.2.3",
+    "firebase": "^11.3.0",
+    "framer-motion": "^12.0.6",
+    "lucide-react": "^0.474.0",
+    "motion": "^12.0.6",
+    "next": "15.1.6",
+    "next-themes": "^0.4.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-firebase-hooks": "^5.1.1",
+    "react-icons": "^5.4.0",
+    "tailwind-merge": "^3.0.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.6",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  },
+  "packageManager": "yarn@4.6.0+sha512.5383cc12567a95f1d668fbe762dfe0075c595b4bfff433be478dbbe24e05251a8e8c3eb992a986667c1d53b6c3a9c85b8398c35a960587fbd9fa3a0915406728"
+}
