@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter
 import { auth, db } from "../firebase/config";
-import { onAuthStateChanged, User } from "firebase/auth";
+// Removed: import { onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { getAllUsers, updateUserData } from "../UserService";
 import {
   collection,
@@ -31,8 +32,9 @@ interface WithdrawRequest {
   timestamp: string;
   email?: string;
   plan: string;
-  address?: string;  // Add this line
+  address?: string;
 }
+
 interface Transaction {
   id: string;
   senderEmail: string;
@@ -50,20 +52,16 @@ export default function AdminDashboard() {
   const router = useRouter(); // Initialize router
   const [users, setUsers] = useState<UserData[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [withdrawRequests, setWithdrawRequests] = useState<WithdrawRequest[]>(
-    []
-  );
+  const [withdrawRequests, setWithdrawRequests] = useState<WithdrawRequest[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-
         if (user.email !== ADMIN_EMAIL) {
-          router.push("/"); 
+          router.push("/");
         } else {
-          setCurrentUser(user);
+          // currentUser is not used elsewhere so we don't assign it.
           fetchUsers();
           fetchWithdrawRequests();
           fetchTransactions(); // Fetch transactions
@@ -74,7 +72,7 @@ export default function AdminDashboard() {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const fetchUsers = async () => {
     try {
@@ -143,6 +141,7 @@ export default function AdminDashboard() {
       console.error("Error fetching withdraw requests:", error);
     }
   };
+
   const handleUpdate = async (
     userId: string,
     field: keyof UserData,
@@ -230,10 +229,10 @@ export default function AdminDashboard() {
       >
         Refresh
       </button>
-      <div  className="overflow-x-auto my-6 border rounded-lg shadow-md">
+      <div className="overflow-x-auto my-6 border rounded-lg shadow-md">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="bg-gradient-to-r from-purple-500 to-green-400 text-white"> 
+            <tr className="bg-gradient-to-r from-purple-500 to-green-400 text-white">
               <th className="border p-2">Email</th>
               <th className="border p-2">Invested Amount</th>
               <th className="border p-2">Profit</th>
@@ -247,47 +246,46 @@ export default function AdminDashboard() {
                 <td className="border p-2">{user.email}</td>
                 <td className="border p-2">
                   <input
-                  aria-label="Enter your name"
+                    aria-label="Invested Amount"
                     type="number"
                     value={user.investedAmount ?? ""}
                     onChange={(e) =>
                       handleUpdate(user.id, "investedAmount", e.target.value)
                     }
-                    className="border p-2 w-full bg-purple-500  text-white"
+                    className="border p-2 w-full bg-purple-500 text-white"
                   />
                 </td>
                 <td className="border p-2">
                   <input
                     type="number"
-                    aria-label="Enter your name"
+                    aria-label="Profit"
                     value={user.profit ?? ""}
                     onChange={(e) =>
-                      
                       handleUpdate(user.id, "profit", e.target.value)
                     }
-                    className="border p-2 w-full bg-purple-500  text-white"
+                    className="border p-2 w-full bg-purple-500 text-white"
                   />
                 </td>
                 <td className="border p-2">
                   <input
                     type="number"
-                    aria-label="Enter your name"
+                    aria-label="Withdraw"
                     value={user.withdraw ?? ""}
                     onChange={(e) =>
                       handleUpdate(user.id, "withdraw", e.target.value)
                     }
-                    className="border p-2 w-full bg-purple-500  text-white"
+                    className="border p-2 w-full bg-purple-500 text-white"
                   />
                 </td>
                 <td className="border p-2">
                   <input
                     type="number"
+                    aria-label="Solana Balance"
                     value={user.solanaBalance ?? ""}
-                    aria-label="Enter your name"
                     onChange={(e) =>
                       handleUpdate(user.id, "solanaBalance", e.target.value)
                     }
-                    className="border p-2 w-full bg-purple-500  text-white"
+                    className="border p-2 w-full bg-purple-500 text-white"
                   />
                 </td>
               </tr>
@@ -300,7 +298,7 @@ export default function AdminDashboard() {
         <table className="w-full border-collapse text-left">
           <thead>
             <tr className="bg-gradient-to-r from-purple-500 to-green-400 text-white">
-            <th className="border p-2">Email</th>
+              <th className="border p-2">Email</th>
               <th className="border p-2">Plan</th>
               <th className="border p-2">Amount</th>
               <th className="border p-2">Address</th>
@@ -309,7 +307,7 @@ export default function AdminDashboard() {
             </tr>
           </thead>
           <tbody>
-          {withdrawRequests.map((request) => (
+            {withdrawRequests.map((request) => (
               <tr key={request.timestamp} className="border">
                 <td className="border p-2">{request.email}</td>
                 <td className="border p-2">{request.plan}</td>
@@ -318,20 +316,18 @@ export default function AdminDashboard() {
                 <td className="border p-2">{request.status}</td>
                 <td className="border p-2">
                   {request.status === "Pending" && (
-                    <>
-                      <button
-                        onClick={() =>
-                          handleWithdrawAction(
-                            request.userId,
-                            request.timestamp,
-                            "Approved"
-                          )
-                        }
-                        className="bg-green-500 text-white px-4 py-2 rounded"
-                      >
-                        Approve
-                      </button>
-                    </>
+                    <button
+                      onClick={() =>
+                        handleWithdrawAction(
+                          request.userId,
+                          request.timestamp,
+                          "Approved"
+                        )
+                      }
+                      className="bg-green-500 text-white px-4 py-2 rounded"
+                    >
+                      Approve
+                    </button>
                   )}
                 </td>
               </tr>

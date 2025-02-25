@@ -23,7 +23,7 @@ export default function UserPanel() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [solanaAddress, setSolanaAddress] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState(""); 
+  const [selectedPlan, setSelectedPlan] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -60,30 +60,29 @@ export default function UserPanel() {
       alert("Please enter the withdrawal amount, Solana address, and select a plan!");
       return;
     }
-  
+
     const amount = parseFloat(withdrawAmount);
     if (isNaN(amount) || amount <= 0) {
       alert("Please enter a valid withdrawal amount!");
       return;
     }
-  
+
     if (!currentUser) {
       alert("User not authenticated!");
       return;
     }
-  
-    // Get the current user's Solana balance
-    const user = users[0]; // Since users array contains only the current user
+
+    const user = users[0];
     if (!user || user.solanaBalance === undefined) {
       alert("Solana balance not available. Please refresh and try again.");
       return;
     }
-  
+
     if (amount > user.solanaBalance) {
       alert("Withdrawal amount exceeds available Solana balance!");
       return;
     }
-  
+
     try {
       const userRef = doc(db, "users", currentUser.uid);
       await updateDoc(userRef, {
@@ -95,41 +94,48 @@ export default function UserPanel() {
           status: "Pending",
         }),
       });
-      console.log("Submitted",selectedPlan);
+      console.log("Submitted", selectedPlan);
       alert("Withdrawal request submitted!");
       setWithdrawAmount("");
       setSolanaAddress("");
-      setSelectedPlan(""); // Reset plan selection
-      setIsModalOpen(false); // Close modal after submission
-    } catch (err) {
+      setSelectedPlan("");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Failed to submit withdrawal request:", error);
       alert("Failed to submit withdrawal request. Try again.");
     }
   };
-  
 
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="container mx-auto p-6 mt-28">
-      <h2  className="text-3xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-green-400">User Panel</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-green-400">
+        User Panel
+      </h2>
       <button
         onClick={() => {
-          if(currentUser){
-          setLoading(true);
-          fetchCurrentUser(currentUser.uid);
-          }
-          else{
+          if (currentUser) {
+            setLoading(true);
+            fetchCurrentUser(currentUser.uid);
+          } else {
             console.log("User not authenticated");
           }
         }}
-       className="block mx-auto  bg-gradient-to-r from-purple-500 to-green-400 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+        className="block mx-auto bg-gradient-to-r from-purple-500 to-green-400 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
       >
         Refresh
       </button>
       <div className="overflow-x-auto my-6 border rounded-lg shadow-md">
-        <table  className="w-full border-collapse text-left">
+        <table className="w-full border-collapse text-left">
           <thead>
-            <tr className=" bg-gradient-to-r from-purple-500 to-green-400 text-white"><th className="border p-2">Plan</th><th className="border p-2">Invested Amount</th><th className="border p-2">Profit</th><th className="border p-2">Withdraw</th><th className="border p-2">Solana Balance</th></tr>
+            <tr className="bg-gradient-to-r from-purple-500 to-green-400 text-white">
+              <th className="border p-2">Plan</th>
+              <th className="border p-2">Invested Amount</th>
+              <th className="border p-2">Profit</th>
+              <th className="border p-2">Withdraw</th>
+              <th className="border p-2">Solana Balance</th>
+            </tr>
           </thead>
           <tbody>
             {users.map((user) => (
@@ -145,7 +151,6 @@ export default function UserPanel() {
         </table>
       </div>
 
-      {/* Withdraw Request Button */}
       <div className="text-center">
         <h3 className="text-xl font-semibold mb-2">Withdraw Request</h3>
         <button
@@ -156,13 +161,11 @@ export default function UserPanel() {
         </button>
       </div>
 
-      {/* Withdrawal Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
             <h2 className="text-xl font-bold mb-4">Withdraw Funds</h2>
 
-            {/* Amount Input */}
             <input
               type="number"
               placeholder="Enter amount in SOL"
@@ -171,7 +174,6 @@ export default function UserPanel() {
               className="p-2 w-full rounded-md border-gray-300 bg-gray-100 text-black mb-3"
             />
 
-            {/* Solana Address Input */}
             <input
               type="text"
               placeholder="Enter Solana Address"
@@ -180,8 +182,8 @@ export default function UserPanel() {
               className="p-2 w-full rounded-md border-gray-300 bg-gray-100 text-black mb-3"
             />
 
-              {/* Plan Selection Dropdown 🆕 */}
-              <select
+            <select
+            title="Select Plan"
               value={selectedPlan}
               onChange={(e) => setSelectedPlan(e.target.value)}
               className="p-2 w-full rounded-md border-gray-300 bg-gray-100 text-black mb-3"
@@ -192,7 +194,6 @@ export default function UserPanel() {
               <option value="Gold">Royal Nest</option>
             </select>
 
-            {/* Buttons */}
             <div className="flex justify-between mt-4">
               <button
                 onClick={handleWithdrawRequest}

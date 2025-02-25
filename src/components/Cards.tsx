@@ -1,14 +1,16 @@
 "use client";
 import { animate, motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { GoCopilot } from "react-icons/go";
 import Link from "next/link";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "@/firebase/config"; // Ensure you have Firebase initialized
+import { app } from "@/firebase/config";
 
-export function CardDemo() {
-
+// ------------------------
+// CardDemo Component
+// ------------------------
+export const CardDemo = () => {
   const auth = getAuth(app);
   const [userEmail, setUserEmail] = useState("guest@example.com");
 
@@ -19,19 +21,18 @@ export function CardDemo() {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
-  const handleClick = (cardTitle: string) => {
-    const targetAppUrl = `${process.env.NEXT_PUBLIC_CASH_APP_URL}/?email=${encodeURIComponent(userEmail)}`;
+  const handleClick = () => {
+    const targetAppUrl = `${process.env.NEXT_PUBLIC_CASH_APP_URL}/?email=${encodeURIComponent(
+      userEmail
+    )}`;
     window.location.href = targetAppUrl;
   };
 
   return (
     <div className="flex justify-center items-center">
-      <Card
-        className="cursor-pointer hover:shadow-lg transition"
-        onClick={() => handleClick("Basic Plan")}
-      >
+      <Card onClick={handleClick}>
         <CardSkeletonContainer>
           <Skeleton />
         </CardSkeletonContainer>
@@ -39,12 +40,14 @@ export function CardDemo() {
         <CardDescription>
           A card that showcases a set of tools that you use to create your product.
         </CardDescription>
-        <Link href={"#" } className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-green-400">Learn more</Link>
+        <Link
+          href="#"
+          className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-green-400"
+        >
+          Learn more
+        </Link>
       </Card>
-      <Card
-       className="cursor-pointer hover:shadow-lg transition"
-       onClick={() => handleClick("Silver Plan")}
-      >
+      <Card onClick={handleClick}>
         <CardSkeletonContainer>
           <Skeleton />
         </CardSkeletonContainer>
@@ -52,12 +55,14 @@ export function CardDemo() {
         <CardDescription>
           A card showcasing some awesome tools for your project.
         </CardDescription>
-        <Link href={"#"} className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-green-400">Learn more</Link>
+        <Link
+          href="#"
+          className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-green-400"
+        >
+          Learn more
+        </Link>
       </Card>
-      <Card
-        className="cursor-pointer hover:shadow-lg transition"
-        onClick={() => handleClick("Gold Plan")}
-      >
+      <Card onClick={handleClick}>
         <CardSkeletonContainer>
           <Skeleton />
         </CardSkeletonContainer>
@@ -65,71 +70,51 @@ export function CardDemo() {
         <CardDescription>
           An amazing card to display your work and achievements.
         </CardDescription>
-        <Link href={"#"} className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-green-400">Learn more</Link>
+        <Link
+          href="#"
+          className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-green-400"
+        >
+          Learn more
+        </Link>
       </Card>
     </div>
   );
-}
+};
 
+// ------------------------
+// Skeleton Component
+// ------------------------
 const Skeleton = () => {
-  const scale = [1, 1.1, 1];
-  const transform = ["translateY(0px)", "translateY(-4px)", "translateY(0px)"];
-  const sequence = [
-    [
-      ".circle-1",
-      {
-        scale,
-        transform,
-      },
-      { duration: 0.8 },
+  const scale = useMemo(() => [1, 1.1, 1], []);
+  const transform = useMemo(
+    () => ["translateY(0px)", "translateY(-4px)", "translateY(0px)"],
+    []
+  );
+
+  const sequence = useMemo(
+    () => [
+      [".circle-1", { scale, transform }, { duration: 0.8 }],
+      [".circle-2", { scale, transform }, { duration: 0.8 }],
+      [".circle-3", { scale, transform }, { duration: 0.8 }],
+      [".circle-4", { scale, transform }, { duration: 0.8 }],
+      [".circle-5", { scale, transform }, { duration: 0.8 }],
     ],
-    [
-      ".circle-2",
-      {
-        scale,
-        transform,
-      },
-      { duration: 0.8 },
-    ],
-    [
-      ".circle-3",
-      {
-        scale,
-        transform,
-      },
-      { duration: 0.8 },
-    ],
-    [
-      ".circle-4",
-      {
-        scale,
-        transform,
-      },
-      { duration: 0.8 },
-    ],
-    [
-      ".circle-5",
-      {
-        scale,
-        transform,
-      },
-      { duration: 0.8 },
-    ],
-  ];
+    [scale, transform]
+  );
 
   useEffect(() => {
-    animate(sequence, {
-      // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    animate(sequence as any, {
       repeat: Infinity,
       repeatDelay: 1,
     });
-  }, []);
+  }, [sequence]);
 
   return (
     <div className="p-8 overflow-hidden h-full relative flex items-center justify-center">
       <div className="flex flex-row flex-shrink-0 justify-center items-center gap-2">
         <Container className="h-8 w-8 circle-1">
-          <ClaudeLogo className="h-4 w-4 " />
+          <ClaudeLogo className="h-4 w-4" />
         </Container>
         <Container className="h-12 w-12 circle-2">
           <GoCopilot className="h-6 w-6 dark:text-white" />
@@ -138,13 +123,12 @@ const Skeleton = () => {
           <OpenAILogo className="h-8 w-8 dark:text-white" />
         </Container>
         <Container className="h-12 w-12 circle-4">
-          <MetaIconOutline className="h-6 w-6 " />
+          <MetaIconOutline className="h-6 w-6" />
         </Container>
         <Container className="h-8 w-8 circle-5">
-          <GeminiLogo className="h-4 w-4 " />
+          <GeminiLogo className="h-4 w-4" />
         </Container>
       </div>
-
       <div className="h-40 w-px absolute top-20 m-auto z-40 bg-gradient-to-b from-transparent via-cyan-500 to-transparent animate-move">
         <div className="w-10 h-32 top-1/2 -translate-y-1/2 absolute -left-10">
           <Sparkles />
@@ -154,20 +138,18 @@ const Skeleton = () => {
   );
 };
 
+// ------------------------
+// Sparkles Component
+// ------------------------
 const Sparkles = () => {
-  const [sparkles, setSparkles] = useState<{
-    id: number;
-    top: string;
-    left: string;
-    opacity: number;
-    scale: number[];
-  }[]>([]);
+  const [sparkles, setSparkles] = useState<
+    { id: number; top: string; left: string; opacity: number; scale: number[] }[]
+  >([]);
 
   useEffect(() => {
     const randomMove = () => Math.random() * 2 - 1;
     const randomOpacity = () => Math.random();
     const random = () => Math.random();
-
     const newSparkles = [...Array(12)].map((_, i) => ({
       id: i,
       top: `calc(${random() * 100}% + ${randomMove()}px)`,
@@ -175,7 +157,6 @@ const Sparkles = () => {
       opacity: randomOpacity(),
       scale: [1, 1.2, 0],
     }));
-
     setSparkles(newSparkles);
   }, []);
 
@@ -199,18 +180,21 @@ const Sparkles = () => {
             position: "absolute",
             top: sparkle.top,
             left: sparkle.left,
-            width: `2px`,
-            height: `2px`,
+            width: "2px",
+            height: "2px",
             borderRadius: "50%",
             zIndex: 1,
           }}
           className="inline-block bg-black dark:bg-white"
-        ></motion.span>
+        />
       ))}
     </div>
   );
 };
 
+// ------------------------
+// Card & Related Components
+// ------------------------
 export const Card = ({
   className,
   children,
@@ -241,12 +225,7 @@ export const CardTitle = ({
   className?: string;
 }) => {
   return (
-    <h3
-      className={cn(
-        "text-lg font-semibold text-gray-800 dark:text-white py-2",
-        className
-      )}
-    >
+    <h3 className={cn("text-lg font-semibold text-gray-800 dark:text-white py-2", className)}>
       {children}
     </h3>
   );
@@ -260,12 +239,7 @@ export const CardDescription = ({
   className?: string;
 }) => {
   return (
-    <p
-      className={cn(
-        "text-sm font-normal text-neutral-600 dark:text-neutral-400 max-w-sm",
-        className
-      )}
-    >
+    <p className={cn("text-sm font-normal text-neutral-600 dark:text-neutral-400 max-w-sm", className)}>
       {children}
     </p>
   );
@@ -305,7 +279,7 @@ const Container = ({
     <div
       className={cn(
         `h-16 w-16 rounded-full flex items-center justify-center bg-[rgba(248,248,248,0.01)]
-    shadow-[0px_0px_8px_0px_rgba(248,248,248,0.25)_inset,0px_32px_24px_-16px_rgba(0,0,0,0.40)]`,
+         shadow-[0px_0px_8px_0px_rgba(248,248,248,0.25)_inset,0px_32px_24px_-16px_rgba(0,0,0,0.40)]`,
         className
       )}
     >
@@ -338,12 +312,7 @@ const ClaudeLogo = ({ className }: { className?: string }) => {
 
 const OpenAILogo = ({ className }: { className?: string }) => {
   return (
-    <svg
-      className={className}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 32 32"
-      fill="currentColor"
-    >
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -354,31 +323,15 @@ const OpenAILogo = ({ className }: { className?: string }) => {
 };
 
 const MetaIconOutline = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    height="40"
-    width="40"
-    viewBox="0 0 24 24"
-    className={className}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 24 24" className={className}>
     <g fill="none" stroke="currentColor" strokeWidth="2">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M4 5v14M20 5v14M4 12l8 7 8-7"
-      ></path>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 5v14M20 5v14M4 12l8 7 8-7"></path>
     </g>
   </svg>
 );
 
 const GeminiLogo = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="40"
-    height="40"
-    viewBox="0 0 40 40"
-    className={className}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" className={className}>
     <path
       fill="currentColor"
       d="M35.054 27.768l-5.275-5.276a1.778 1.778 0 0 0-2.521 2.52l3.608 3.61H4.59l3.608-3.61a1.778 1.778 0 0 0-2.521-2.52L4.946 27.768A8.74 8.74 0 0 0 7.263 19.94c1.803-3.605 5.25-6.263 9.429-6.263 5.016 0 9.128 3.273 10.465 7.789 1.336 4.517.489 9.277-3.103 12.242z"

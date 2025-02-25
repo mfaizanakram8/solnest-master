@@ -10,7 +10,6 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Meteors } from "./ui/meteors";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { IconBrandGoogle } from "@tabler/icons-react";
 
 export function SignupFormDemo() {
@@ -21,7 +20,6 @@ export function SignupFormDemo() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -46,11 +44,7 @@ export function SignupFormDemo() {
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       // Save user data in Firestore with default values
@@ -64,8 +58,12 @@ export function SignupFormDemo() {
       });
 
       router.push("/signin"); // Redirect to signin after signup
-    } catch (err: any) {
-      setError(err.message || "An error occurred. Please try again.");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -90,8 +88,12 @@ export function SignupFormDemo() {
       }
 
       router.push("/signin"); // Redirect to signin after Google signup
-    } catch (err: any) {
-      setError(err.message || "An error occurred. Please try again.");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -158,7 +160,6 @@ export function SignupFormDemo() {
           </div>
         </LabelInputContainer>
 
-
         <button
           type="submit"
           className="bg-gradient-to-r from-purple-500 to-green-400 w-full text-white rounded-md h-10 font-medium"
@@ -196,3 +197,5 @@ export function SignupFormDemo() {
 const LabelInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col space-y-2 w-full">{children}</div>
 );
+
+export default SignupFormDemo;

@@ -7,7 +7,6 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Meteors } from "./ui/meteors";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 export function SigninFormDemo() {
   const [email, setEmail] = useState("");
@@ -22,18 +21,26 @@ export function SigninFormDemo() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/user"); // Redirect to user.tsx after login
+      router.push("/user"); // Redirect to user page after login
     } catch (err) {
-      setError((err as any).message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
     }
   };
 
   const handleGoogleSignin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      router.push("/"); // Redirect to user.tsx after Google login
+      router.push("/"); // Redirect to homepage after Google login
     } catch (err) {
-      setError((err as any).message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
     }
   };
 
@@ -99,7 +106,7 @@ export function SigninFormDemo() {
       </form>
 
       <p>
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link
           href="/signup"
           className="text-gradient bg-clip-text bg-gradient-to-r from-purple-500 to-green-400"
@@ -115,3 +122,5 @@ export function SigninFormDemo() {
 const LabelInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col space-y-2 w-full">{children}</div>
 );
+
+export default SigninFormDemo;

@@ -41,8 +41,7 @@ const Navbar = () => {
   };
 
   const handleUserPanelNavigation = async () => {
-    const auth = getAuth(app);
-    router.push("/user"); // Navigate to the home page after logout
+    router.push("/user"); // Navigate to the user panel page
   };
 
   // Check if it's the home page
@@ -52,7 +51,13 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 w-full z-50 bg-transparent backdrop-blur-md py-6 px-6 flex justify-between items-center">
       {/* Logo */}
       <div className="flex items-center space-x-2">
-        <Image src="/logo.png" alt="Logo" className="h-16 w-16" width={200} height={200} />
+        <Image
+          src="/logo.png"
+          alt="Logo"
+          className="h-16 w-16"
+          width={200}
+          height={200}
+        />
       </div>
 
       {/* Desktop Menu */}
@@ -67,8 +72,13 @@ const Navbar = () => {
           <Link
             key={href}
             href={href}
-            className={`text-sm transition-colors duration-300 ${isHomePage ? (isScrolled ? "text-slate-500" : "text-white") : "text-black"
-              }`}
+            className={`text-sm transition-colors duration-300 ${
+              isHomePage
+                ? isScrolled
+                  ? "text-slate-500"
+                  : "text-white"
+                : "text-black"
+            }`}
           >
             {label}
           </Link>
@@ -96,8 +106,13 @@ const Navbar = () => {
         ) : (
           <Link
             href="/signin"
-            className={`text-sm font-semibold transition-colors duration-300 ${isHomePage ? (isScrolled ? "text-slate-500" : "text-white") : "text-black"
-              }`}
+            className={`text-sm font-semibold transition-colors duration-300 ${
+              isHomePage
+                ? isScrolled
+                  ? "text-slate-500"
+                  : "text-white"
+                : "text-black"
+            }`}
           >
             Login
           </Link>
@@ -120,7 +135,11 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="fixed top-0 left-0 w-full h-screen bg-black/80 backdrop-blur-lg flex flex-col items-center justify-center space-y-6 text-lg">
-          <button title="close" className="absolute top-4 right-6 text-white" onClick={() => setIsOpen(false)}>
+          <button
+            title="close"
+            className="absolute top-4 right-6 text-white"
+            onClick={() => setIsOpen(false)}
+          >
             <X size={28} />
           </button>
 
@@ -131,7 +150,12 @@ const Navbar = () => {
             { href: "#pricing", label: "Costs & Charges" },
             { href: "#faqs", label: "Common Questions" },
           ].map(({ href, label }) => (
-            <Link key={href} href={href} className="hover:text-gray-300 text-white" onClick={() => setIsOpen(false)}>
+            <Link
+              key={href}
+              href={href}
+              className="hover:text-gray-300 text-white"
+              onClick={() => setIsOpen(false)}
+            >
               {label}
             </Link>
           ))}
@@ -148,7 +172,11 @@ const Navbar = () => {
               User Panel
             </button>
           ) : (
-            <Link href="/signin" className="hover:text-gray-300 text-white" onClick={() => setIsOpen(false)}>
+            <Link
+              href="/signin"
+              className="hover:text-gray-300 text-white"
+              onClick={() => setIsOpen(false)}
+            >
               Login
             </Link>
           )}
